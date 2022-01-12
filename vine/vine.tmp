@@ -1,0 +1,156 @@
+{
+  "Name": "vine",
+  "CreationDate": "2021-11-21",
+  "Commands": [
+    {
+      "Command": "open",
+      "Target": "https://vinelink.vineapps.com/search/CA/Person",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//*[@id=\"person-search-type-select\"]/div/div[2]/div",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//*[@id=\"mat-option-40\"]/span",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "type",
+      "Target": "id=partial-search-checkbox-input",
+      "Value": "on",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "id=person-last-name-input",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "type",
+      "Target": "id=person-last-name-input",
+      "Value": "%%letter%%",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//*[@id=\"partial-search-checkbox\"]/label/span",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//*[@id=\"search-button\"]/span",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "tryagain",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "true",
+      "Value": "!statusOK",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript",
+      "Target": "var return_value = 0;\nvar mh = document.getElementById('pnf-main-header');\nif (mh){\n   if (mh.innerText =='No results found'){\n      return_value = 1;\n   }\n}\nvar s = document.querySelector('body > div.nw-main-body-block > h1');\nif (s){\n \tif (s.innerText == 'VINE is not working right now'){\n   \t\treturn_value = 1;\n\t} \n}\n\nreturn return_value;\n       ",
+      "Value": "head_check",
+      "Description": ""
+    },
+    {
+      "Command": "if_v2",
+      "Target": "${head_check} > 0",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "gotoLabel",
+      "Target": "end_script",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "else",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "verifyElementPresent",
+      "Target": "id=person-search-search-terms",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "0",
+      "Value": "cnt",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf_v2",
+      "Target": "${!statusOK} == false",
+      "Value": "tryagain",
+      "Description": ""
+    },
+    {
+      "Command": "end",
+      "Target": "",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "continue_load",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "2000",
+      "Value": "",
+      "Description": ""
+    },
+    {
+      "Command": "store",
+      "Target": "0",
+      "Value": "idx",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript",
+      "Target": "\nvar tag = ${cnt}; var dfile= '%%letter%%_download_'+tag+'.csv';\nvar data=[];\n var result = Number(${idx});\n\n var head=[]; head.push('Name');\n head.push('Facility');\n head.push('ID');\n head.push('Status');\n data.push(head.join(\",\"));\n \nvar person_cards = document.querySelectorAll('html>body>vl-vine-link-app>div>div>main>vl-person-search-results>div>div>vl-person-card');\n\n\nfor (var i=0;i<person_cards.length;++i){\n   var r=[];\n   var tag = person_cards[i].querySelector('mat-card>mat-card-title>h2');\n\n   \n\n    r.push(tag.innerHTML);\n\n\n\n   \tvar tag1 = person_cards[i].querySelector('#person-reporting-agency-name');\n    if (tag1){\n  \t\tr.push(tag1.innerText);\n\t} else {\n        r.push(\"No agency\");\n    }\n    \t\n\n    var tag2 = person_cards[i].querySelector('#person-person-context-refid-value');\n    if (tag2){\n       r.push(tag2.innerText);\n    } else{\n       r.push(\"No id found\");\n    }\n   \n    \n    var tag3 = person_cards[i].querySelector('#person-custody-status-value');\n\tif (tag3){\n      r.push(tag3.innerText);\n    } else {\n      r.push(\"No status found\")\n    }\n  \n    \n\n    data.push(r.join(\",\"));\n\n  \n\n}\n\n\n\tcsv_file = new Blob([data.join(\"\\n\")], {type: \"text/csv\"});\n\n\tdownload_link = document.createElement(\"a\");\n\n\tdownload_link.download = dfile;\n\n\tdownload_link.href = window.URL.createObjectURL(csv_file);\n\n\tdownload_link.style.display = \"none\";\n\n\tdocument.body.appendChild(download_link);\n\n\tdownload_link.click();\n\nvar continue_button = document.getElementById(\"person-search-pagination-button\");\nwhile (continue_button !== null){\n    continue_button.click();\n    result += 1;\n    return result;\n}\nresult = Number(0);\nreturn result;\n\n\n\n",
+      "Value": "idx",
+      "Description": ""
+    },
+    {
+      "Command": "executeScript",
+      "Target": "return Number(${cnt}) + 1;",
+      "Value": "cnt",
+      "Description": ""
+    },
+    {
+      "Command": "gotoIf_v2",
+      "Target": "${idx} >= 1",
+      "Value": "continue_load",
+      "Description": ""
+    },
+    {
+      "Command": "label",
+      "Target": "end_script",
+      "Value": "",
+      "Description": ""
+    }
+  ]
+}
